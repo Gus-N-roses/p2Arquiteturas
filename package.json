@@ -1,24 +1,27 @@
 {
-  "name": "portal",
+  "name": "servico-acesso",
   "version": "1.0.0",
-  "description": "Gym Control - portal de APIs, roteamento e agregação",
+  "description": "Gym Control - microsserviço de controle de acesso/check-in",
   "main": "dist/principal.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/principal.js",
     "dev": "tsx watch codigo/principal.ts",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "bdd": "TS_NODE_TRANSPILE_ONLY=1 cucumber-js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "http-proxy-middleware": "^2.0.6"
+    "express": "^4.19.2"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^10.8.0",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.16.0",
     "typescript": "^5.5.0"
   }
 }
