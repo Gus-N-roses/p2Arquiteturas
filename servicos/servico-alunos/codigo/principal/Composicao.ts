@@ -17,6 +17,11 @@ import {
   RegisterStudentInput,
   RegisterStudentOutput,
 } from '../aplicacao/casos-de-uso/CadastrarAluno';
+import {
+  RemoverAluno,
+  RemoverAlunoEntrada,
+  RemoverAlunoSaida,
+} from '../aplicacao/casos-de-uso/RemoverAluno';
 import { ResolvedorEstrategiaPreco } from '../dominio/precificacao/ResolvedorEstrategiaPreco';
 import { AlunoMatriculado } from '../dominio/eventos/AlunoMatriculado';
 import { BarramentoEventosEmMemoria } from '../infraestrutura/eventos/BarramentoEventosEmMemoria';
@@ -41,6 +46,7 @@ export class Container {
   private static instance: Container | null = null;
 
   readonly cadastrarAluno: CasoDeUso<RegisterStudentInput, RegisterStudentOutput>;
+  readonly removerAluno: CasoDeUso<RemoverAlunoEntrada, RemoverAlunoSaida>;
   readonly matricularAluno: CasoDeUso<EnrollStudentInput, EnrollStudentOutput>;
   readonly listarAlunos: CasoDeUso<void, StudentView[]>;
   readonly listarPlanos: CasoDeUso<void, PlanView[]>;
@@ -89,6 +95,11 @@ export class Container {
     this.listarAlunos = new DecoradorLogCasoDeUso(
       'ListStudents',
       new ListStudents(alunos),
+      registrador,
+    );
+    this.removerAluno = new DecoradorLogCasoDeUso(
+      'RemoverAluno',
+      new RemoverAluno(alunos),
       registrador,
     );
     this.listarPlanos = new DecoradorLogCasoDeUso('ListPlans', new ListPlans(planos), registrador);

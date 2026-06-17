@@ -31,4 +31,8 @@ export class InMemoryRepositorioAluno implements RepositorioAluno {
   async list(): Promise<Student[]> {
     return [...this.byId.values()];
   }
+
+  async remover(id: string): Promise<void> {
+    this.byId.delete(id);
+  }
 }

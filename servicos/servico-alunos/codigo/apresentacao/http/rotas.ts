@@ -15,6 +15,7 @@ export function buildRouter(container: Container): Router {
   const controladorAluno = new ControladorAluno(
     container.cadastrarAluno,
     container.listarAlunos,
+    container.removerAluno,
   );
   const controladorMatricula = new ControladorMatricula(
     container.matricularAluno,
@@ -26,6 +27,7 @@ export function buildRouter(container: Container): Router {
 
   rotas.post('/students', tratarAssincrono(controladorAluno.criar));
   rotas.get('/students', tratarAssincrono(controladorAluno.listar));
+  rotas.delete('/students/:studentId', tratarAssincrono(controladorAluno.remover));
 
   rotas.post('/students/:studentId/enrollments', tratarAssincrono(controladorMatricula.matricular));
   rotas.get('/students/:studentId/membership', tratarAssincrono(controladorMatricula.consultarMatricula));

@@ -82,7 +82,11 @@
     .alunos .item:hover { border-color:var(--primary); background:var(--primary-light); transform:translateX(2px); }
     .alunos .avatar { width:30px; height:30px; border-radius:50%; background:var(--primary);
       color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; flex-shrink:0; }
+    .alunos .dados { min-width:0; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .alunos .pick { margin-left:auto; font-size:11px; color:var(--primary); font-weight:500; text-transform:uppercase; }
+    .alunos .remover { margin-left:4px; width:34px; height:34px; padding:0; border-radius:50%;
+      justify-content:center; background:transparent; color:var(--red); box-shadow:none; border:1px solid transparent; flex-shrink:0; }
+    .alunos .remover:hover { background:var(--red-light); border-color:#f4b4ad; box-shadow:none; }
 
     /* Activity log */
     .log-card { grid-column:1 / -1; }
@@ -212,6 +216,11 @@
       document.getElementById('current').textContent = nome ? `${nome}` : id.slice(0,8) + '…';
     }
 
+    function limparAlunoAtual() {
+      alunoAtualId = null;
+      document.getElementById('current').textContent = 'nenhum';
+    }
+
     function registrarLog(titulo, dados, erro) {
       const logTela = document.getElementById('log');
       const linha = document.createElement('div');
@@ -262,11 +271,44 @@
           const linha = document.createElement('div');
           linha.className = 'item';
           const iniciais = aluno.name.split(' ').map(parte=>parte[0]).slice(0,2).join('').toUpperCase();
-          linha.innerHTML = `<span class="avatar">${iniciais}</span><span>${aluno.name} — ${aluno.cpf}</span><span class="pick">selecionar</span>`;
+          const avatar = document.createElement('span');
+          avatar.className = 'avatar';
+          avatar.textContent = iniciais;
+
+          const dados = document.createElement('span');
+          dados.className = 'dados';
+          dados.textContent = `${aluno.name} — ${aluno.cpf}`;
+
+          const selecionar = document.createElement('span');
+          selecionar.className = 'pick';
+          selecionar.textContent = 'selecionar';
+
+          const remover = document.createElement('button');
+          remover.className = 'remover';
+          remover.title = `Remover ${aluno.name}`;
+          remover.setAttribute('aria-label', `Remover ${aluno.name}`);
+          remover.innerHTML = '<span class="material-symbols-outlined">delete</span>';
+          remover.onclick = (evento) => {
+            evento.stopPropagation();
+            removerAluno(aluno);
+          };
+
+          linha.append(avatar, dados, selecionar, remover);
           linha.onclick = () => { selecionarAluno(aluno.id, aluno.name); registrarLog('Aluno selecionado', aluno); };
           lista.appendChild(linha);
         });
         registrarLog(`Alunos (${alunos.length})`, alunos);
+      } catch {}
+    }
+
+    async function removerAluno(aluno) {
+      if (!confirm(`Remover ${aluno.name}?`)) return;
+
+      try {
+        const resposta = await chamarApi('DELETE', `/api/members/students/${aluno.id}`);
+        if (alunoAtualId === aluno.id) limparAlunoAtual();
+        registrarLog('Aluno removido', resposta);
+        listarAlunos();
       } catch {}
     }
 

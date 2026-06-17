@@ -29,6 +29,7 @@ export function createApp(config: ConfiguracaoServicos = carregarConfiguracao())
         planos: 'GET /api/members/plans',
         alunos: 'GET /api/members/students',
         cadastrarAluno: 'POST /api/members/students {name, cpf, email}',
+        removerAluno: 'DELETE /api/members/students/:id',
         matricular: 'POST /api/members/students/:id/enrollments {planId}',
         emitirFatura: 'POST /api/billing/invoices {studentId, description, amountInCents, dueDate}',
         pagarFatura: 'POST /api/billing/invoices/:id/payment {paidAt}',

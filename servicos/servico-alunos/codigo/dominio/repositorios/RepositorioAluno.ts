@@ -13,4 +13,5 @@ export interface RepositorioAluno {
   findById(id: string): Promise<Student | null>;
   findByCpf(cpf: Cpf): Promise<Student | null>;
   list(): Promise<Student[]>;
+  remover(id: string): Promise<void>;
 }
