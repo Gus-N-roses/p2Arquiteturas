@@ -29,6 +29,21 @@ público** (o do `portal`), que orquestra os demais serviços.
 > Observação: no plano gratuito os serviços "dormem" após inatividade; a
 > primeira requisição pode levar alguns segundos para "acordar" o container.
 
+### Se criar os serviços manualmente no Render
+
+Não use o root do repositório para todos os serviços. Configure assim:
+
+| Serviço | Root Directory | Dockerfile Path | Docker Context |
+| ------- | -------------- | --------------- | -------------- |
+| `servico-alunos` | `servicos/servico-alunos` | `Dockerfile` | `.` |
+| `servico-financeiro` | `servicos/servico-financeiro` | `Dockerfile` | `.` |
+| `servico-acesso` | `servicos/servico-acesso` | `Dockerfile` | `.` |
+| `portal` | `servicos/portal` | `Dockerfile` | `.` |
+
+Se o Render mostrar `failed to read dockerfile: open Dockerfile: no such file
+or directory`, algum serviço está com o Root Directory errado ou está ignorando
+o Blueprint.
+
 ---
 
 ## Opção B — VM única com Docker Compose (Google Cloud / AWS / qualquer VPS)
