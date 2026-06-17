@@ -1,0 +1,19 @@
+# Dockerfile padrão para deploy manual no Render.
+# Ele publica o portal do Gym Control.
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY servicos/portal/package*.json ./
+RUN npm install
+COPY servicos/portal/tsconfig.json servicos/portal/tsconfig.build.json ./
+COPY servicos/portal/codigo ./codigo
+RUN npm run build
+
+FROM node:20-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+COPY servicos/portal/package*.json ./
+RUN npm install --omit=dev && npm cache clean --force
+COPY --from=build /app/dist ./dist
+COPY servicos/portal/publico ./publico
+EXPOSE 3000
+CMD ["node", "dist/principal.js"]

@@ -12,8 +12,7 @@ services:
   - type: web
     name: servico-alunos
     runtime: docker
-    rootDir: servicos/servico-alunos
-    dockerfilePath: Dockerfile
+    dockerfilePath: Dockerfile.servico-alunos
     dockerContext: .
     plan: free
     healthCheckPath: /health
@@ -21,8 +20,7 @@ services:
   - type: web
     name: servico-financeiro
     runtime: docker
-    rootDir: servicos/servico-financeiro
-    dockerfilePath: Dockerfile
+    dockerfilePath: Dockerfile.servico-financeiro
     dockerContext: .
     plan: free
     healthCheckPath: /health
@@ -33,8 +31,7 @@ services:
   - type: web
     name: servico-acesso
     runtime: docker
-    rootDir: servicos/servico-acesso
-    dockerfilePath: Dockerfile
+    dockerfilePath: Dockerfile.servico-acesso
     dockerContext: .
     plan: free
     healthCheckPath: /health
@@ -46,8 +43,7 @@ services:
   - type: web
     name: portal
     runtime: docker
-    rootDir: servicos/portal
-    dockerfilePath: Dockerfile
+    dockerfilePath: Dockerfile.portal
     dockerContext: .
     plan: free
     healthCheckPath: /health

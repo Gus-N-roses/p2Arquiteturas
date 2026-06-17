@@ -35,14 +35,15 @@ Não use o root do repositório para todos os serviços. Configure assim:
 
 | Serviço | Root Directory | Dockerfile Path | Docker Context |
 | ------- | -------------- | --------------- | -------------- |
-| `servico-alunos` | `servicos/servico-alunos` | `Dockerfile` | `.` |
-| `servico-financeiro` | `servicos/servico-financeiro` | `Dockerfile` | `.` |
-| `servico-acesso` | `servicos/servico-acesso` | `Dockerfile` | `.` |
-| `portal` | `servicos/portal` | `Dockerfile` | `.` |
+| `servico-alunos` | vazio | `Dockerfile.servico-alunos` | `.` |
+| `servico-financeiro` | vazio | `Dockerfile.servico-financeiro` | `.` |
+| `servico-acesso` | vazio | `Dockerfile.servico-acesso` | `.` |
+| `portal` | vazio | `Dockerfile.portal` | `.` |
 
 Se o Render mostrar `failed to read dockerfile: open Dockerfile: no such file
-or directory`, algum serviço está com o Root Directory errado ou está ignorando
-o Blueprint.
+or directory`, o serviço foi criado manualmente usando o Dockerfile padrão. Nesse
+caso, use a tabela acima. Para publicar só a interface/portal manualmente, o
+`Dockerfile` padrão da raiz também funciona.
 
 ---
 

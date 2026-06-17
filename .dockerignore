@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/build
+**/coverage
+**/relatorios
+**/*.log
+**/*.zip
+.git
+.DS_Store
