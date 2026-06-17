@@ -29,6 +29,23 @@ público** (o do `portal`), que orquestra os demais serviços.
 > Observação: no plano gratuito os serviços "dormem" após inatividade; a
 > primeira requisição pode levar alguns segundos para "acordar" o container.
 
+## Opção rápida — Render com um único Web Service
+
+Use esta opção se você quer só um link funcionando para apresentar:
+
+1. No Render: **New > Web Service**.
+2. Selecione o repositório `p2Arquiteturas`.
+3. Runtime: **Docker**.
+4. Dockerfile Path: `Dockerfile`.
+5. Docker Context: `.`.
+6. Root Directory: deixe vazio.
+7. Faça o deploy.
+
+Esse `Dockerfile` da raiz sobe os 4 processos no mesmo container:
+`servico-alunos`, `servico-financeiro`, `servico-acesso` e `portal`. O código
+continua organizado como microsserviços, mas a demonstração fica simples e com
+um único link público.
+
 ### Se criar os serviços manualmente no Render
 
 Não use o root do repositório para todos os serviços. Configure assim:
