@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gym Control — Console de Testes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <style>
+    :root {
+      --primary:#1a73e8; --primary-dark:#1557b0; --primary-light:#e8f0fe;
+      --green:#1e8e3e; --green-light:#e6f4ea; --red:#d93025; --red-light:#fce8e6;
+      --surface:#ffffff; --bg:#f1f3f4; --text:#202124; --muted:#5f6368; --border:#dadce0;
+      --e1:0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+      --e2:0 1px 2px 0 rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15);
+      --e3:0 4px 8px 3px rgba(60,64,67,.15), 0 1px 3px rgba(60,64,67,.3);
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:'Roboto',sans-serif; background:var(--bg); color:var(--text); }
+    .material-symbols-outlined { font-size:20px; vertical-align:middle; line-height:1; }
+
+    /* App bar */
+    .appbar { position:sticky; top:0; z-index:10; background:var(--primary); color:#fff;
+      box-shadow:var(--e2); padding:0 24px; height:64px; display:flex; align-items:center; gap:14px; }
+    .appbar .logo { font-size:26px; }
+    .appbar h1 { font-size:20px; font-weight:500; margin:0; letter-spacing:.2px; }
+    .appbar .sub { font-size:13px; opacity:.85; font-weight:400; }
+    .chip { margin-left:auto; background:rgba(255,255,255,.18); border-radius:18px; padding:7px 14px;
+      font-size:13px; display:flex; align-items:center; gap:6px; backdrop-filter:blur(2px); }
+    .chip b { font-weight:500; }
+
+    /* Layout */
+    main { max-width:1120px; margin:0 auto; padding:24px; display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:20px; align-items:start; }
+
+    /* Cards */
+    .card { background:var(--surface); border-radius:16px; box-shadow:var(--e1); padding:20px;
+      transition:box-shadow .25s ease, transform .25s ease; opacity:0; transform:translateY(14px);
+      animation:rise .5s forwards; }
+    .card:hover { box-shadow:var(--e3); transform:translateY(-3px); }
+    @keyframes rise { to { opacity:1; transform:translateY(0); } }
+    .card:nth-child(1){animation-delay:.04s} .card:nth-child(2){animation-delay:.10s}
+    .card:nth-child(3){animation-delay:.16s} .card:nth-child(4){animation-delay:.22s}
+    .card:nth-child(5){animation-delay:.28s} .card:nth-child(6){animation-delay:.34s}
+    .card h2 { font-size:16px; font-weight:500; margin:0 0 4px; display:flex; align-items:center; gap:10px; }
+    .card h2 .ico { width:38px; height:38px; border-radius:50%; background:var(--primary-light);
+      color:var(--primary); display:flex; align-items:center; justify-content:center; }
+    .card .desc { font-size:12.5px; color:var(--muted); margin:0 0 14px; }
+
+    /* Text fields */
+    label { display:block; font-size:12px; color:var(--muted); margin:12px 0 5px; font-weight:500; }
+    entrada, select { width:100%; padding:11px 12px; background:var(--surface);
+      border:1px solid var(--border); border-radius:8px; color:var(--text);
+      font-size:14px; font-family:inherit; transition:border-color .2s, box-shadow .2s; }
+    entrada:focus, select:focus { outline:none; border-color:var(--primary);
+      box-shadow:0 0 0 3px var(--primary-light); }
+    .row { display:flex; gap:10px; flex-wrap:wrap; }
+    .row > div { flex:1; min-width:130px; }
+
+    /* Buttons with ripple */
+    .actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+    button { position:relative; overflow:hidden; border:none; cursor:pointer;
+      font-family:inherit; font-size:13.5px; font-weight:500; padding:10px 18px; border-radius:20px;
+      display:inline-flex; align-items:center; gap:6px; transition:box-shadow .2s, background .2s;
+      background:var(--primary); color:#fff; box-shadow:var(--e1); }
+    button:hover { box-shadow:var(--e2); background:var(--primary-dark); }
+    button.green { background:var(--green); } button.green:hover { background:#176c30; }
+    button.ghost { background:transparent; color:var(--primary); box-shadow:none; border:1px solid var(--border); }
+    button.ghost:hover { background:var(--primary-light); box-shadow:none; }
+    .ripple { position:absolute; border-radius:50%; transform:scale(0); background:rgba(255,255,255,.5);
+      animation:ripple .6s linear; pointer-events:none; }
+    button.ghost .ripple { background:rgba(26,115,232,.3); }
+    @keyframes ripple { to { transform:scale(2.6); opacity:0; } }
+
+    /* Lista de alunos */
+    .alunos { margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+    .alunos .item { padding:10px 12px; border:1px solid var(--border); border-radius:10px;
+      display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13.5px;
+      transition:border-color .2s, background .2s, transform .15s; }
+    .alunos .item:hover { border-color:var(--primary); background:var(--primary-light); transform:translateX(2px); }
+    .alunos .avatar { width:30px; height:30px; border-radius:50%; background:var(--primary);
+      color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; flex-shrink:0; }
+    .alunos .pick { margin-left:auto; font-size:11px; color:var(--primary); font-weight:500; text-transform:uppercase; }
+
+    /* Activity log */
+    .log-card { grid-column:1 / -1; }
+    #log { font-family:'Roboto Mono',monospace; font-size:12.5px; max-height:340px; overflow:auto; }
+    .log-entry { padding:10px 0; border-bottom:1px solid #eee; white-space:pre-wrap; animation:fadeIn .3s; }
+    .log-entry:first-child { padding-top:0; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+    .log-entry .m { color:var(--green); font-weight:500; }
+    .log-entry .e { color:var(--red); font-weight:500; }
+  </style>
+</head>
+<body>
+  <div class="appbar">
+    <span class="material-symbols-outlined logo">fitness_center</span>
+    <div>
+      <h1>Gym Control</h1>
+      <div class="sub">ERP de academias · console de testes</div>
+    </div>
+    <span class="chip"><span class="material-symbols-outlined" style="font-size:18px">account_circle</span> Aluno atual: <b id="current">nenhum</b></span>
+  </div>
+
+  <main>
+    <!-- Planos -->
+    <section class="card">
+      <h2><span class="ico material-symbols-outlined">sell</span> Planos</h2>
+      <p class="desc">Catálogo de planos com preço por periodicidade.</p>
+      <div class="actions"><button class="ghost" onclick="listarPlanos()">Listar planos</button></div>
+    </section>
+
+    <!-- Alunos -->
+    <section class="card">
+      <h2><span class="ico material-symbols-outlined">person</span> Alunos</h2>
+      <p class="desc">Cadastre um aluno (CPF validado no domínio).</p>
+      <label>Nome</label><entrada id="s-name" value="Maria Silva" />
+      <div class="row">
+        <div><label>CPF</label><entrada id="s-cpf" value="168.995.350-09" /></div>
+        <div><label>E-mail</label><entrada id="s-email" value="maria@academia.com" /></div>
+      </div>
+      <div class="actions">
+        <button class="green" onclick="cadastrarAluno()"><span class="material-symbols-outlined" style="font-size:18px">add</span> Cadastrar</button>
+        <button class="ghost" onclick="listarAlunos()">Listar alunos</button>
+      </div>
+      <div class="alunos" id="alunos"></div>
+    </section>
+
+    <!-- Matrícula -->
+    <section class="card">
+      <h2><span class="ico material-symbols-outlined">card_membership</span> Matrícula</h2>
+      <p class="desc">Preço calculado por estratégia (desconto de fidelidade).</p>
+      <label>Plano</label>
+      <select id="m-plan">
+        <option value="plan-monthly">Mensal — R$ 120,00</option>
+        <option value="plan-quarterly">Trimestral — −5%</option>
+        <option value="plan-annual">Anual — −15%</option>
+      </select>
+      <div class="actions"><button class="green" onclick="matricularAluno()">Matricular aluno atual</button></div>
+    </section>
+
+    <!-- Financeiro -->
+    <section class="card">
+      <h2><span class="ico material-symbols-outlined">payments</span> Financeiro</h2>
+      <p class="desc">Emita e pague mensalidades (multa por atraso via Strategy).</p>
+      <div class="row">
+        <div><label>Valor (R$)</label><entrada id="i-amount" value="120" /></div>
+        <div><label>Vencimento</label><entrada id="i-due" value="2026-06-10" /></div>
+      </div>
+      <div class="actions">
+        <button class="green" onclick="emitirFatura()">Emitir fatura</button>
+        <button class="ghost" onclick="listarFaturas()">Listar faturas</button>
+      </div>
+      <label>Pagamento — data (use depois do vencimento p/ ver multa)</label>
+      <entrada id="p-date" value="2026-06-20" />
+      <div class="actions"><button onclick="pagarPrimeiraFatura()">Pagar 1ª fatura pendente</button></div>
+    </section>
+
+    <!-- Catraca -->
+    <section class="card">
+      <h2><span class="ico material-symbols-outlined">meeting_room</span> Catraca</h2>
+      <p class="desc">O acesso consulta a matrícula no servico-alunos (HTTP).</p>
+      <div class="actions">
+        <button class="green" onclick="registrarEntrada()">Check-in do aluno atual</button>
+        <button class="ghost" onclick="registrarEntradaInexistente()">Aluno inexistente (negar)</button>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section class="card">
+      <h2><span class="ico material-symbols-outlined">dashboard</span> Dashboard (Facade)</h2>
+      <p class="desc">Uma chamada agrega dados dos três microsserviços.</p>
+      <div class="actions"><button onclick="abrirPainel()">Carregar dashboard</button></div>
+    </section>
+
+    <!-- Log -->
+    <section class="card log-card">
+      <h2><span class="ico material-symbols-outlined">terminal</span> Atividade</h2>
+      <div id="log"><div class="log-entry">Pronto. Cadastre um aluno ou liste os existentes para começar.</div></div>
+    </section>
+  </principal>
+
+  <script>
+    let alunoAtualId = null;
+
+    // Gera um CPF VÁLIDO aleatório (mesmo algoritmo de dígito verificador do
+    // domínio) para que cada cadastro seja único e não colida.
+    function gerarCpfAleatorio() {
+      const numeros = [];
+      for (let indice = 0; indice < 9; indice++) numeros.push(Math.floor(Math.random() * 9));
+      const calcularDigito = (tamanho) => {
+        let soma = 0;
+        for (let indice = 0; indice < tamanho; indice++) soma += numeros[indice] * (tamanho + 1 - indice);
+        const resto = (soma * 10) % 11;
+        return resto === 10 ? 0 : resto;
+      };
+      numeros.push(calcularDigito(9));
+      numeros.push(calcularDigito(10));
+      return numeros.join('').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    }
+
+    // Preenche o form com uma identidade nova (CPF e e-mail únicos).
+    function preencherNovaIdentidade() {
+      document.getElementById('s-cpf').value = gerarCpfAleatorio();
+      document.getElementById('s-email').value = 'aluno' + Date.now() + '@academia.com';
+    }
+
+    function selecionarAluno(id, nome) {
+      alunoAtualId = id;
+      document.getElementById('current').textContent = nome ? `${nome}` : id.slice(0,8) + '…';
+    }
+
+    function registrarLog(titulo, dados, erro) {
+      const logTela = document.getElementById('log');
+      const linha = document.createElement('div');
+      linha.className = 'log-entry';
+      const classe = erro ? 'e' : 'm';
+      linha.innerHTML = `<span class="${classe}">▶ ${titulo}</span>\n` +
+        (typeof dados === 'string' ? dados : JSON.stringify(dados, null, 2));
+      logTela.prepend(linha);
+    }
+
+    async function chamarApi(metodo, caminho, corpo) {
+      const opcoes = { method: metodo, headers: { 'Content-Type': 'application/json' } };
+      if (corpo) opcoes.body = JSON.stringify(corpo);
+      const resposta = await fetch(caminho, opcoes);
+      let dados; try { dados = await resposta.json(); } catch { dados = await resposta.text(); }
+      if (!resposta.ok) {
+        registrarLog(`${metodo} ${caminho} → HTTP ${resposta.status}`, dados, true);
+        throw dados;
+      }
+      return dados;
+    }
+
+    async function listarPlanos() {
+      try { registrarLog('Planos', await chamarApi('GET', '/api/members/plans')); } catch {}
+    }
+
+    async function cadastrarAluno() {
+      const aluno = {
+        name: document.getElementById('s-name').value,
+        cpf: document.getElementById('s-cpf').value,
+        email: document.getElementById('s-email').value,
+      };
+      try {
+        const alunoCriado = await chamarApi('POST', '/api/members/students', aluno);
+        selecionarAluno(alunoCriado.id, alunoCriado.name);
+        registrarLog('Aluno cadastrado (selecionado como atual)', alunoCriado);
+        listarAlunos();
+        preencherNovaIdentidade(); // novo CPF/e-mail para o próximo cadastro
+      } catch {}
+    }
+
+    async function listarAlunos() {
+      try {
+        const alunos = await chamarApi('GET', '/api/members/students');
+        const lista = document.getElementById('alunos');
+        lista.innerHTML = '';
+        alunos.forEach(aluno => {
+          const linha = document.createElement('div');
+          linha.className = 'item';
+          const iniciais = aluno.name.split(' ').map(parte=>parte[0]).slice(0,2).join('').toUpperCase();
+          linha.innerHTML = `<span class="avatar">${iniciais}</span><span>${aluno.name} — ${aluno.cpf}</span><span class="pick">selecionar</span>`;
+          linha.onclick = () => { selecionarAluno(aluno.id, aluno.name); registrarLog('Aluno selecionado', aluno); };
+          lista.appendChild(linha);
+        });
+        registrarLog(`Alunos (${alunos.length})`, alunos);
+      } catch {}
+    }
+
+    function exigirAlunoSelecionado() {
+      if (!alunoAtualId) {
+        registrarLog('Selecione/cadastre um aluno primeiro', '', true);
+        throw new Error('aluno nao selecionado');
+      }
+    }
+
+    async function matricularAluno() {
+      try { exigirAlunoSelecionado();
+        const matricula = await chamarApi('POST', `/api/members/students/${alunoAtualId}/enrollments`, { planId: document.getElementById('m-plan').value });
+        registrarLog('Matrícula criada', matricula);
+      } catch {}
+    }
+
+    async function emitirFatura() {
+      try { exigirAlunoSelecionado();
+        const fatura = await chamarApi('POST', '/api/billing/invoices', {
+          studentId: alunoAtualId,
+          description: 'Mensalidade',
+          amountInCents: Math.round(parseFloat(document.getElementById('i-amount').value) * 100),
+          dueDate: document.getElementById('i-due').value + 'T00:00:00Z',
+        });
+        registrarLog('Fatura emitida', fatura);
+      } catch {}
+    }
+
+    async function listarFaturas() {
+      try { exigirAlunoSelecionado();
+        registrarLog('Faturas do aluno', await chamarApi('GET', `/api/billing/students/${alunoAtualId}/invoices`));
+      } catch {}
+    }
+
+    async function pagarPrimeiraFatura() {
+      try { exigirAlunoSelecionado();
+        const faturas = await chamarApi('GET', `/api/billing/students/${alunoAtualId}/invoices`);
+        const pendente = faturas.find(fatura => fatura.status === 'PENDING');
+        if (!pendente) { registrarLog('Nenhuma fatura pendente', '', true); return; }
+        const pagamento = await chamarApi('POST', `/api/billing/invoices/${pendente.id}/payment`, { paidAt: document.getElementById('p-date').value + 'T00:00:00Z' });
+        registrarLog('Pagamento realizado (veja a multa, se houver atraso)', pagamento);
+      } catch {}
+    }
+
+    async function registrarEntrada() {
+      try { exigirAlunoSelecionado();
+        const entrada = await chamarApi('POST', '/api/access/checkins', { studentId: alunoAtualId });
+        registrarLog(entrada.allowed ? '✅ Catraca LIBERADA' : '⛔ Catraca BLOQUEADA', entrada);
+      } catch {}
+    }
+
+    async function registrarEntradaInexistente() {
+      try {
+        const resposta = await fetch('/api/access/checkins', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ studentId: 'fantasma-123' }) });
+        registrarLog('Check-in de aluno inexistente (HTTP ' + resposta.status + ')', await resposta.json(), !resposta.ok);
+      } catch {}
+    }
+
+    async function abrirPainel() {
+      try { exigirAlunoSelecionado();
+        registrarLog('Dashboard agregado (members + billing + access)', await chamarApi('GET', `/api/students/${alunoAtualId}/dashboard`));
+      } catch {}
+    }
+
+    // Ripple effect (Material motion)
+    document.addEventListener('click', (e) => {
+      const botao = e.target.closest('button');
+      if (!botao) return;
+      const onda = document.createElement('span');
+      const diametro = Math.max(botao.clientWidth, botao.clientHeight);
+      const area = botao.getBoundingClientRect();
+      onda.style.width = onda.style.height = diametro + 'px';
+      onda.style.left = (e.clientX - area.left - diametro/2) + 'px';
+      onda.style.top = (e.clientY - area.top - diametro/2) + 'px';
+      onda.className = 'ripple';
+      botao.appendChild(onda);
+      setTimeout(() => onda.remove(), 600);
+    });
+
+    preencherNovaIdentidade();
+    listarAlunos();
+  </script>
+</body>
+</html>

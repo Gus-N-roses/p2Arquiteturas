@@ -1,0 +1,56 @@
+# Blueprint de deploy para o Render (https://render.com).
+# Cria os 4 serviços a partir dos respectivos Dockerfiles. O Render injeta a
+# variável PORT automaticamente; cada serviço já lê `process.env.PORT`.
+#
+# Como usar:
+#   1. Suba este repositório no GitHub.
+#   2. No Render: New > Blueprint > selecione o repositório.
+#   3. Após o primeiro deploy, preencha as variáveis marcadas com `sync: false`
+#      (URLs públicas https dos serviços) — veja PUBLICACAO.md.
+
+services:
+  - type: web
+    name: servico-alunos
+    runtime: docker
+    dockerfilePath: ./servicos/servico-alunos/Dockerfile
+    dockerContext: ./servicos/servico-alunos
+    plan: free
+    healthCheckPath: /health
+
+  - type: web
+    name: servico-financeiro
+    runtime: docker
+    dockerfilePath: ./servicos/servico-financeiro/Dockerfile
+    dockerContext: ./servicos/servico-financeiro
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: POLITICA_MULTA
+        value: STANDARD
+
+  - type: web
+    name: servico-acesso
+    runtime: docker
+    dockerfilePath: ./servicos/servico-acesso/Dockerfile
+    dockerContext: ./servicos/servico-acesso
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      # URL pública https do servico-alunos (preencher no dashboard).
+      - key: URL_SERVICO_ALUNOS
+        sync: false
+
+  - type: web
+    name: portal
+    runtime: docker
+    dockerfilePath: ./servicos/portal/Dockerfile
+    dockerContext: ./servicos/portal
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: URL_SERVICO_ALUNOS
+        sync: false
+      - key: URL_SERVICO_FINANCEIRO
+        sync: false
+      - key: URL_SERVICO_ACESSO
+        sync: false

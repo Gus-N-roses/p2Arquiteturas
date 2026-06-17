@@ -1,0 +1,68 @@
+# Orquestração local de todo o ERP de academias.
+# Cada serviço é uma imagem independente; comunicam-se pela rede interna do
+# Compose usando os nomes de serviço como hostname (service discovery do Docker).
+#
+# Subir tudo:   docker compose up --build
+# Acessar:      http://localhost:3000  (portal)
+#
+# As portas publicadas são configuráveis para evitar conflito com algo que já
+# rode na sua máquina, ex.:
+# PORTA_ALUNOS=3101 PORTA_FINANCEIRO=3102 PORTA_ACESSO=3103 PORTA_PORTAL=3100 docker compose up --build
+
+services:
+  servico-alunos:
+    build: ./servicos/servico-alunos
+    environment:
+      PORT: 3001
+    ports:
+      - "${PORTA_ALUNOS:-3001}:3001"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  servico-financeiro:
+    build: ./servicos/servico-financeiro
+    environment:
+      PORT: 3002
+    ports:
+      - "${PORTA_FINANCEIRO:-3002}:3002"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  servico-acesso:
+    build: ./servicos/servico-acesso
+    environment:
+      PORT: 3003
+      URL_SERVICO_ALUNOS: http://servico-alunos:3001
+    ports:
+      - "${PORTA_ACESSO:-3003}:3003"
+    depends_on:
+      servico-alunos:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3003/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  portal:
+    build: ./servicos/portal
+    environment:
+      PORT: 3000
+      URL_SERVICO_ALUNOS: http://servico-alunos:3001
+      URL_SERVICO_FINANCEIRO: http://servico-financeiro:3002
+      URL_SERVICO_ACESSO: http://servico-acesso:3003
+    ports:
+      - "${PORTA_PORTAL:-3000}:3000"
+    depends_on:
+      servico-alunos:
+        condition: service_healthy
+      servico-financeiro:
+        condition: service_healthy
+      servico-acesso:
+        condition: service_healthy
