@@ -51,10 +51,10 @@
 
     /* Text fields */
     label { display:block; font-size:12px; color:var(--muted); margin:12px 0 5px; font-weight:500; }
-    entrada, select { width:100%; padding:11px 12px; background:var(--surface);
+    input, select { width:100%; padding:11px 12px; background:var(--surface);
       border:1px solid var(--border); border-radius:8px; color:var(--text);
       font-size:14px; font-family:inherit; transition:border-color .2s, box-shadow .2s; }
-    entrada:focus, select:focus { outline:none; border-color:var(--primary);
+    input:focus, select:focus { outline:none; border-color:var(--primary);
       box-shadow:0 0 0 3px var(--primary-light); }
     .row { display:flex; gap:10px; flex-wrap:wrap; }
     .row > div { flex:1; min-width:130px; }
@@ -116,10 +116,10 @@
     <section class="card">
       <h2><span class="ico material-symbols-outlined">person</span> Alunos</h2>
       <p class="desc">Cadastre um aluno (CPF validado no domínio).</p>
-      <label>Nome</label><entrada id="s-name" value="Maria Silva" />
+      <label>Nome</label><input id="s-name" value="Maria Silva" />
       <div class="row">
-        <div><label>CPF</label><entrada id="s-cpf" value="168.995.350-09" /></div>
-        <div><label>E-mail</label><entrada id="s-email" value="maria@academia.com" /></div>
+        <div><label>CPF</label><input id="s-cpf" value="168.995.350-09" /></div>
+        <div><label>E-mail</label><input id="s-email" value="maria@academia.com" /></div>
       </div>
       <div class="actions">
         <button class="green" onclick="cadastrarAluno()"><span class="material-symbols-outlined" style="font-size:18px">add</span> Cadastrar</button>
@@ -146,15 +146,15 @@
       <h2><span class="ico material-symbols-outlined">payments</span> Financeiro</h2>
       <p class="desc">Emita e pague mensalidades (multa por atraso via Strategy).</p>
       <div class="row">
-        <div><label>Valor (R$)</label><entrada id="i-amount" value="120" /></div>
-        <div><label>Vencimento</label><entrada id="i-due" value="2026-06-10" /></div>
+        <div><label>Valor (R$)</label><input id="i-amount" value="120" /></div>
+        <div><label>Vencimento</label><input id="i-due" value="2026-06-10" /></div>
       </div>
       <div class="actions">
         <button class="green" onclick="emitirFatura()">Emitir fatura</button>
         <button class="ghost" onclick="listarFaturas()">Listar faturas</button>
       </div>
       <label>Pagamento — data (use depois do vencimento p/ ver multa)</label>
-      <entrada id="p-date" value="2026-06-20" />
+      <input id="p-date" value="2026-06-20" />
       <div class="actions"><button onclick="pagarPrimeiraFatura()">Pagar 1ª fatura pendente</button></div>
     </section>
 
@@ -180,7 +180,7 @@
       <h2><span class="ico material-symbols-outlined">terminal</span> Atividade</h2>
       <div id="log"><div class="log-entry">Pronto. Cadastre um aluno ou liste os existentes para começar.</div></div>
     </section>
-  </principal>
+  </main>
 
   <script>
     let alunoAtualId = null;
